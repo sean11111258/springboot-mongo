@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="BIG5">
-<title>Insert title here</title>
+<title>主頁</title>
 </head>
 <body>
 	<form action="addUser">
@@ -12,7 +12,7 @@
 			id: <input type="text" name="id"><br>
 		</div>
 		<div>
-			name: <input type="text" name="name"><br>
+			姓名: <input type="text" name="name"><br>
 		</div>
 		<div>
 			<input type="submit"><br>
@@ -21,7 +21,14 @@
 
 	<form action="getUser">
 		<div>
-			搜尋user <input type="text" name="id" value="id"><br> <input
+			使用id搜尋user <input type="text" name="id" value="id"><br> <input
+				type="submit"><br>
+		</div>
+	</form>
+	
+	<form action="deleteUser">
+		<div>
+			使用id刪除user <input type="text" name="id" value="id"><br> <input
 				type="submit"><br>
 		</div>
 	</form>
