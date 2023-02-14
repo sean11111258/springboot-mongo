@@ -8,8 +8,9 @@
 </head>
 <body>
 	<form action="addUser">
+		<div>輸入id及姓名增加user</div>
 		<div>
-			id: <input type="text" name="id"><br>
+			id: <input type="text" name="id" value="id"><br>
 		</div>
 		<div>
 			姓名: <input type="text" name="name"><br>
@@ -20,15 +21,17 @@
 	</form>
 
 	<form action="getUser">
+		<div>使用id搜尋user</div>
 		<div>
-			使用id搜尋user <input type="text" name="id" value="id"><br> <input
+			<input type="text" name="id" value="id"><br> <input
 				type="submit"><br>
 		</div>
 	</form>
-	
+
 	<form action="deleteUser">
+		<div>使用id刪除user</div>
 		<div>
-			使用id刪除user <input type="text" name="id" value="id"><br> <input
+			<input type="text" name="id" value="id"><br> <input
 				type="submit"><br>
 		</div>
 	</form>

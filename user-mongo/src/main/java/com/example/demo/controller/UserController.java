@@ -1,10 +1,10 @@
 package com.example.demo.controller;
 
+import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,46 +13,56 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.example.demo.dao.UserRepo;
-import com.example.demo.model.User;
+import com.example.demo.model.UserRequest;
+import com.example.demo.model.UserResponse;
+import com.example.demo.service.UserService;
 
 @RestController
+@RequestMapping(value = "/users")
 public class UserController {
 	@Autowired
-	UserRepo repo;
-    // 增
-    @PostMapping(path = "/User", consumes = { "application/json" })
-    public User addUser(@RequestBody User user) {
-        repo.insert(user);
-        return user;
-    }
+	private UserService userservice;
 
-    // 刪
-    @DeleteMapping("/User/{id}")
-    public User deleteUser(@PathVariable int id) {
-        User u = repo.findById(id).get();
-        repo.delete(u);
-        return u;
-    }
+	// 增
+	@PostMapping
+	public ResponseEntity<UserResponse> addUser(@RequestBody UserRequest request) {
+		UserResponse user = userservice.addUser(request);
 
-    // 查--all
-    @GetMapping(path = "/Users")
-    public List<User> getUsers() {
-        return repo.findAll();
-    }
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId())
+				.toUri();
 
-    // 改
-    @PutMapping(path = "/User", consumes = { "application/json" })
-    public User updateUser(@RequestBody User user) {
-        repo.save(user);
-        return user;
-    }
+		return ResponseEntity.created(location).body(user);
+	}
 
-    // 查--id
-    @RequestMapping("/User/{id}")
-    public Optional<User> getUser(@PathVariable("id") int id) {
-        return repo.findById(id);
-    }
+	// 刪
+	@DeleteMapping("/{id}")
+	public ResponseEntity deleteUser(@PathVariable int id) {
+		userservice.deleteUser(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	// 查--all
+	@GetMapping
+	public ResponseEntity<List<UserResponse>> getUsers() {
+		List<UserResponse> users = userservice.getUserResponses();
+		return ResponseEntity.ok(users);
+
+	}
+
+	// 改
+	@PutMapping()
+	public ResponseEntity<UserResponse> updateUser( @RequestBody UserRequest request) {
+		UserResponse user = userservice.updateUser(request);
+		return ResponseEntity.ok(user);
+	}
+
+	// 查--id
+	@RequestMapping("/{id}")
+	public ResponseEntity<UserResponse> getUser(@PathVariable("id") int id) {
+		UserResponse user = userservice.getUserResponse(id);
+		return ResponseEntity.ok(user);
+	}
 
 }

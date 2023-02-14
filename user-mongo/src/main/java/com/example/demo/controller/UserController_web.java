@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,13 +7,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.example.demo.dao.UserRepo;
+import com.example.demo.converter.UserConverter;
 import com.example.demo.model.User;
+import com.example.demo.model.UserRequest;
+import com.example.demo.service.UserService;
 
 @Controller
 public class UserController_web {
 	@Autowired
-	UserRepo repo;
+	UserService userservice;
 
 	@RequestMapping("/")
 	public String home() {
@@ -22,9 +23,11 @@ public class UserController_web {
 	}
 
 	@RequestMapping("/addUser")
-	public ModelAndView addUser(User user) {
+	public ModelAndView addUser(UserRequest request) {
 		ModelAndView mv = new ModelAndView("showUser.jsp");
-		repo.insert(user);
+		User user=UserConverter.toUser(request);
+		
+		userservice.addUser(request);
 		mv.addObject(new User() {
 			@Override
 			public String toString() {
@@ -37,12 +40,7 @@ public class UserController_web {
 	@RequestMapping("/getUser")
 	public ModelAndView getUser(@RequestParam int id) {
 		ModelAndView mv = new ModelAndView("showUser.jsp");
-		User user = repo.findById(id).orElse(new User() {
-			@Override
-			public String toString() {
-				return "No Such User";
-			}
-		});
+		User user = userservice.getUser(id);
 		mv.addObject(user);
 		return mv;
 	}
@@ -50,23 +48,15 @@ public class UserController_web {
 	@RequestMapping("/deleteUser")
 	public ModelAndView deleteUser(@RequestParam int id) {
 		ModelAndView mv = new ModelAndView("showUser.jsp");
-		Optional<User> user = repo.findById(id);
-		if (user.isEmpty()) {
-			mv.addObject(new User() {
-				@Override
-				public String toString() {
-					return "No Such User";
-				}
-			});
-		}
+		User user = userservice.getUser(id);
 
+		userservice.deleteUser(user.getId());
 		mv.addObject(new User() {
 			@Override
 			public String toString() {
-				return user.get().toString() + " is deleted";
+				return user.toString() + " is deleted";
 			}
 		});
-		repo.delete(user.get());
 		return mv;
 	}
 
