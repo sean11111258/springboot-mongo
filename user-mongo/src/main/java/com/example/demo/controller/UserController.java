@@ -21,7 +21,6 @@ import com.example.demo.model.User;
 public class UserController {
 	@Autowired
 	UserRepo repo;
-	//branch
     // 增
     @PostMapping(path = "/User", consumes = { "application/json" })
     public User addUser(@RequestBody User user) {
